@@ -11,17 +11,17 @@
         body {
             font-family: 'Nanum Gothic', sans-serif;
             margin: 0;
-            padding: 2px 0 0 5px; /* 상단과 좌측에 10px 패딩 */
-            background-color: #000000; /* 배경색: 검정 */
+            padding: 2px 0 0 5px;
+            background-color: #000000;
             color: white;
             display: flex;
-            justify-content: flex-start; /* 왼쪽 정렬 */
+            justify-content: flex-start;
             align-items: flex-start;
             height: 100vh;
         }
         .main {
             display: flex;
-            align-items: flex-start; /* 왼쪽 정렬 */
+            align-items: flex-start;
             background-color: #000000;
             padding: 0px;
             width: 700px;
@@ -29,13 +29,13 @@
         .weather-info {
             font-size: 50px;
             text-align: center;
-            padding-top:5px;
+            padding-top: 5px;
             margin-right: 20px;
         }
         .weather-icon {
             width: 50px;
             height: 55px;
-            padding-top:8px;
+            padding-top: 8px;
             margin-right: 5px;
         }
         table {
@@ -44,17 +44,15 @@
             background-color: black;
             font-size: 20px;
         }
-
         th {
             background-color: #004d40;
-            font-size: 24px; /* 헤더 셀의 폰트 크기 설정 */
-            }
-
+            font-size: 24px;
+        }
         td {
-            font-size: 30px; /* 데이터 셀의 폰트 크기 설정 */
+            font-size: 30px;
             text-align: center;
             color: white;
-            }
+        }
         .error {
             color: red;
             text-align: center;
@@ -120,9 +118,8 @@
         }
 
         async function fetchWeatherData(date, hour) {
-            const area = "&nx=98&ny=76"; // 부산 지역 좌표
-            const apiKey = 'YOUR_API_KEY'; // 여기에 API 키를 입력하세요.
-            const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=jf%2FvdfY7Y%2BbX9OrcH4QGLyZoaIZAXSa7hYlvlZ9mU%2B8eLl3o7ZkUFIHKY45xn1ksjCiwnxG5xvrojybxWJ3R5Q%3D%3D&pageNo=1&numOfRows=10&dataType=JSON&base_date=${date}&base_time=${hour}&nx=59&ny=74`; // URL 수정 필요
+            const apiKey = 'YOUR_API_KEY'; // 여기에 실제 API 키를 입력하세요.
+            const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${apiKey}&pageNo=1&numOfRows=10&dataType=JSON&base_date=${date}&base_time=${hour}&nx=59&ny=76`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
@@ -154,7 +151,7 @@
 
                 weatherData.weather = weatherString;
                 weatherData.temperature = temperature;
-                weatherData.pty = skyStat; // skyStat로 pty 대체
+                weatherData.pty = skyStat;
 
                 updateWeatherDisplay();
                 fetchAirQualityData(); // 미세먼지 데이터 가져오기
@@ -193,7 +190,19 @@
             const { weather, temperature, pty } = weatherData;
             document.getElementById('weatherInfo').innerText = `${weather} ${temperature}`;
 
-            // 날씨 아이콘 설정
             const weatherIcon = document.getElementById('weatherIcon');
             if (pty === '1') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png';
+            } else if (pty === '2' || pty === '4') {
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Rain.png';
+            } else if (pty === '3') {
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow_Rain.png';
+            } else {
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png';
+            }
+        }
+
+        function getStatus(pm10, pm25) {
+            if (pm10 <= 30 && pm25 <= 15) return '좋음';
+            if (pm10 <= 80 && pm25 <= 35) return '보통';
+            if (pm10 <= 150 && pm25 <= 75) return '
