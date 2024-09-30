@@ -22,8 +22,6 @@
         .main {
             display: flex;
             align-items: flex-start;
-            background-color: #000000;
-            padding: 0px;
             width: 700px;
         }
         .weather-info {
@@ -117,33 +115,77 @@
             }
         }
 
+        async function fetchWeatherData(date, hour) {
+            const apiKey = 'YOUR_WEATHER_API_KEY'; // 여기에 날씨 API 키를 입력하세요.
+            const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${apiKey}&pageNo=1&numOfRows=10&dataType=JSON&base_date=${date}&base_time=${hour}&nx=59&ny=74`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const weatherInfo = data.response.body.items.item;
+
+                let weatherString = '';
+                let temperature = '';
+                let skyStat = '';
+
+                weatherInfo.forEach(item => {
+                    if (item.category === 'SKY') {
+                        const sky = parseInt(item.fcstValue);
+                        skyStat = sky === 1 ? '1' : sky === 2 ? '2' : sky === 3 ? '3' : '4';
+                    } else if (item.category === 'TMP') {
+                        temperature = `${item.fcstValue}°C`;
+                    } else if (item.category === 'PTY') {
+                        const pty = parseInt(item.fcstValue);
+                        if (pty === 1 || pty === 4) {
+                            weatherString = '비';
+                        } else if (pty === 2) {
+                            weatherString = '비/눈';
+                        } else if (pty === 3) {
+                            weatherString = '눈';
+                        } else if (pty === 0) {
+                            weatherString = (skyStat === '1' || skyStat === '2') ? "맑음" : "흐림";
+                        }
+                    }
+                });
+
+                weatherData.weather = weatherString;
+                weatherData.temperature = temperature;
+                weatherData.pty = skyStat;
+
+                updateWeatherDisplay();
+            } catch (error) {
+                console.error('날씨 데이터 가져오기 오류:', error);
+                document.getElementById('error').innerText = `날씨 데이터 오류: ${error.message}`;
+            }
+        }
+
         async function fetchAirQuality() {
-            const serviceUrl = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc';
-            const apiKey = 'cd3PPQWcbkKMI5VfNxGsPtJrtQj06/deSWnzTp7x9WcwByrKU26y4O8UCCJSWTN24yIW6hHLmA0DleNDExXe1A==';
-            const url = `${serviceUrl}/getMsrstnAcctoRltmMesureDnsty?serviceKey=${encodeURIComponent(apiKey)}&numOfRows=1&pageNo=1&ver=1.0&stationName=광주&dataTerm=DAILY`;
+            const apiKey = 'cd3PPQWcbkKMI5VfNxGsPtJrtQj06/deSWnzTp7x9WcwByrKU26y4O8UCCJSWTN24yIW6hHLmA0DleNDExXe1A=='; // 여기에 미세먼지 API 키를 입력하세요.
+            const url = `http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=${encodeURIComponent(apiKey)}&sidoName=광주&numOfRows=1&pageNo=1&ver=1.0`;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 const airQualityInfo = data.response.body.items[0];
 
-                const pm10 = airQualityInfo.pm10Value;
-                const pm25 = airQualityInfo.pm25Value;
-                const status = getStatus(pm10, pm25);
+                const airQualityData = {
+                    pm10: airQualityInfo.pm10, // PM10 값
+                    pm25: airQualityInfo.pm25, // PM2.5 값
+                    status: getStatus(airQualityInfo.pm10, airQualityInfo.pm25) // 상태 계산
+                };
 
-                updateAirQualityDisplay(pm10, pm25, status);
+                updateAirQualityDisplay(airQualityData);
             } catch (error) {
                 console.error('미세먼지 데이터 가져오기 오류:', error);
                 document.getElementById('error').innerText = `미세먼지 데이터 오류: ${error.message}`;
             }
         }
 
-        function updateAirQualityDisplay(pm10, pm25, status) {
+        function updateAirQualityDisplay(airQualityData) {
             const dataRow = document.getElementById('dataRow');
             dataRow.innerHTML = `
-                <td>${pm10}</td>
-                <td>${pm25}</td>
-                <td>${status}</td>
+                <td>${airQualityData.pm10}</td>
+                <td>${airQualityData.pm25}</td>
+                <td>${airQualityData.status}</td>
             `;
         }
 
@@ -154,11 +196,15 @@
             return '매우 나쁨';
         }
 
-        // 페이지 로드 시 초기 날씨 및 미세먼지 데이터 호출
-        window.onload = async () => {
-            await fetchWeather();
-            await fetchAirQuality();
-        };
+        // 초기 데이터 호출
+        fetchWeather();
+        fetchAirQuality();
+
+        // 매시간 정각에 데이터 갱신
+        setInterval(() => {
+            fetchWeather();
+            fetchAirQuality();
+        }, 3600000); // 1시간마다 갱신
     </script>
 </body>
 </html>
