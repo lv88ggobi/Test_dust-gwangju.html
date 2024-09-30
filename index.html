@@ -118,8 +118,9 @@
         }
 
         async function fetchWeatherData(date, hour) {
-            const apiKey = 'YOUR_API_KEY'; // 여기에 실제 API 키를 입력하세요.
+            const apiKey = 'YOUR_API_KEY'; // 실제 API 키를 입력하세요.
             const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${apiKey}&pageNo=1&numOfRows=10&dataType=JSON&base_date=${date}&base_time=${hour}&nx=59&ny=76`;
+
             try {
                 const response = await fetch(url);
                 const data = await response.json();
@@ -170,8 +171,8 @@
                 const data = await response.json();
                 const airQualityInfo = data.list[0];
 
-                const pm10 = airQualityInfo.pm10Value; // 미세먼지 수치
-                const pm25 = airQualityInfo.pm25Value; // 초미세먼지 수치
+                const pm10 = airQualityInfo.pm10Value || '정보 없음'; // 미세먼지 수치
+                const pm25 = airQualityInfo.pm25Value || '정보 없음'; // 초미세먼지 수치
                 const status = getStatus(pm10, pm25); // 상태 계산
 
                 const dataRow = document.getElementById('dataRow');
@@ -203,6 +204,7 @@
         }
 
         function getStatus(pm10, pm25) {
+            pm10 = parseFloat(pm10) || 0;
+            pm25 = parseFloat(pm25) || 0;
             if (pm10 <= 30 && pm25 <= 15) return '좋음';
-            if (pm10 <= 80 && pm25 <= 35) return '보통';
-            if (pm10 <= 150 && pm25 <= 75) return '
+            if (
