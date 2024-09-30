@@ -12,7 +12,7 @@
         body {
             font-family: 'Nanum Gothic', sans-serif;
             margin: 0;
-            padding: 10px 0 0 5px; /* 상단과 좌측에 15px 패딩 */
+            padding: 2px 0 0 5px; /* 상단과 좌측에 10px 패딩 */
             background-color: #000000; /* 배경색: 검정 */
             color: white;
             display: flex;
@@ -25,25 +25,25 @@
             align-items: flex-start; /* 왼쪽 정렬 */
             background-color: #000000;
             padding: 0px;
-            width: 1200px;
+            width: 700px;
         }
         .weather-info {
-            font-size: 48px;
+            font-size: 50px;
             text-align: center;
             padding-top:5px;
             margin-right: 20px;
         }
         .weather-icon {
-            width: 60px;
-            height: 60px;
-            padding-top:5px;
-            margin-right: 20px;
+            width: 50px;
+            height: 55px;
+            padding-top:8px;
+            margin-right: 5px;
         }
         table {
-            width: 300px;
+            width: 285px;
             border-collapse: collapse;
             background-color: black;
-            font-size: 30px;
+            font-size: 20px;
         }
 
         th {
@@ -52,7 +52,7 @@
             }
 
         td {
-            font-size: 36px; /* 데이터 셀의 폰트 크기 설정 */
+            font-size: 30px; /* 데이터 셀의 폰트 크기 설정 */
             text-align: center;
             color: white;
             }
