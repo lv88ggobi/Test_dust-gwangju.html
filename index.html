@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -45,17 +44,15 @@
             background-color: black;
             font-size: 20px;
         }
-
         th {
             background-color: #004d40;
             font-size: 24px; /* 헤더 셀의 폰트 크기 설정 */
-            }
-
+        }
         td {
             font-size: 30px; /* 데이터 셀의 폰트 크기 설정 */
             text-align: center;
             color: white;
-            }
+        }
         .error {
             color: red;
             text-align: center;
@@ -91,10 +88,12 @@
         let weatherData = {
             weather: '',
             temperature: '',
-            pty: ''
+            pty: '',
+            skyStat: '' // skyStat 추가
         };
 
         async function fetchWeather() {
+            // 날씨 정보 가져오기
             const today = new Date();
             const date = today.toISOString().slice(0, 10).replace(/-/g, '');
             let hour = String(today.getHours()).padStart(2, '0') + '00';
@@ -118,12 +117,15 @@
             } else {
                 await fetchWeatherData(date, hour);
             }
+
+            // 미세먼지 데이터도 가져오기
+            await fetchAirQualityData();
         }
 
         async function fetchWeatherData(date, hour) {
             const area = "&nx=98&ny=76"; // 부산 지역 좌표
             const apiKey = 'YOUR_API_KEY'; // 여기에 API 키를 입력하세요.
-            const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=jf%2FvdfY7Y%2BbX9OrcH4QGLyZoaIZAXSa7hYlvlZ9mU%2B8eLl3o7ZkUFIHKY45xn1ksjCiwnxG5xvrojybxWJ3R5Q%3D%3D&pageNo=1&numOfRows=10&dataType=JSON&base_date=${date}&base_time=${hour}&nx=59&ny=74`; // URL 수정 필요
+            const url =  `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=jf%2FvdfY7Y%2BbX9OrcH4QGLyZoaIZAXSa7hYlvlZ9mU%2B8eLl3o7ZkUFIHKY45xn1ksjCiwnxG5xvrojybxWJ3R5Q%3D%3D&pageNo=1&numOfRows=10&dataType=JSON&base_date=${date}&base_time=${hour}&nx=59&ny=74`; // URL 수정 필요
             try {
                 const response = await fetch(url);
                 const data = await response.json();
@@ -131,16 +133,16 @@
 
                 let weatherString = '';
                 let temperature = '';
-                let skyStat = '';
 
                 weatherInfo.forEach(item => {
                     if (item.category === 'SKY') {
                         const sky = parseInt(item.fcstValue);
-                        skyStat = sky === 1 ? '1' : sky === 2 ? '2' : sky === 3 ? '3' : '4';
+                        weatherData.skyStat = sky; // skyStat 저장
                     } else if (item.category === 'TMP') {
                         temperature = `${item.fcstValue}°C`;
                     } else if (item.category === 'PTY') {
                         const pty = parseInt(item.fcstValue);
+                        weatherData.pty = pty; // pty 저장
                         if (pty === 1 || pty === 4) {
                             weatherString = '비';
                         } else if (pty === 2) {
@@ -148,61 +150,60 @@
                         } else if (pty === 3) {
                             weatherString = '눈';
                         } else if (pty === 0) {
-                            weatherString = (skyStat === '1' || skyStat === '2') ? "맑음" : "흐림";
+                            weatherString = (weatherData.skyStat === 1 || weatherData.skyStat === 2) ? "맑음" : "흐림";
                         }
                     }
                 });
 
                 weatherData.weather = weatherString;
                 weatherData.temperature = temperature;
-                weatherData.pty = skyStat; // skyStat로 pty 대체
 
                 updateWeatherDisplay();
-            }catch (error) {
-        console.error('날씨 데이터 가져오기 오류:', error);
-        document.getElementById('error').innerText = `날씨 데이터 오류: ${error.message}`;
-
-        if (attempt < 6) {
-            setTimeout(() => {
-                fetchWeatherData(date, hour, attempt + 1);
-            }, 10000); // 10초 후 재호출
-        } else {
-            document.getElementById('error').innerText = `날씨 데이터 오류: 최대 재호출 시도 횟수 초과`;
+            } catch (error) {
+                console.error('날씨 데이터 가져오기 오류:', error);
+                document.getElementById('error').innerText = `날씨 데이터 오류: ${error.message}`;
+            }
         }
-    }
+
+        async function fetchAirQualityData() {
+            const airQualityApiUrl = 'https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=cd3PPQWcbkKMI5VfNxGsPtJrtQj06%2FdeSWnzTp7x9WcwByrKU26y4O8UCCJSWTN24yIW6hHLmA0DleNDExXe1A%3D%3D&sidoName=%EA%B4%91%EC%A3%BC&pageNo=1&numOfRows=1&returnType=JSON&ver=1.0'; // 여기에 미세먼지 API URL을 입력하세요.
+            try {
+                const response = await fetch(airQualityApiUrl);
+                const data = await response.json();
+                const airQualityInfo = data.response.body.items[0]; // 첫 번째 아이템 가져오기
+
+                // pm10Value와 pm25Value를 td에 업데이트
+                const dataRow = document.getElementById('dataRow');
+                dataRow.innerHTML = `
+                    <td>${airQualityInfo.pm10Value}</td>
+                    <td>${airQualityInfo.pm25Value}</td>
+                    <td>${getStatus(airQualityInfo.pm10Value, airQualityInfo.pm25Value)}</td>
+                `;
+            } catch (error) {
+                console.error('미세먼지 데이터 가져오기 오류:', error);
+                document.getElementById('error').innerText = `미세먼지 데이터 오류: ${error.message}`;
+            }
         }
 
         function updateWeatherDisplay() {
-            const { weather, temperature, pty } = weatherData;
+            const { weather, temperature, pty, skyStat } = weatherData;
             document.getElementById('weatherInfo').innerText = `${weather} ${temperature}`;
 
             // 날씨 아이콘 설정
             const weatherIcon = document.getElementById('weatherIcon');
-            if (pty === '1') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png';
+            if (pty === '0' && skyStat === '1') {
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png'; // 맑음
+            } else if (pty === '1') {
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Rain.png'; // 비
             } else if (pty === '2' || pty === '4') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Rain.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow_Rain.png'; // 비/눈
             } else if (pty === '3') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow_Rain.png';
-            } else if (pty === '4') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow.png'; // 눈
+            } else if (pty === '0' && skyStat === '4') {
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png'; // 흐림
             } else {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png'; // 기본 흐림 아이콘
             }
-
-            // 미세먼지 데이터 업데이트 (임시 데이터)
-            const dataRow = document.getElementById('dataRow');
-            const airQualityData = {
-                pm10: 50, // 예시 값
-                pm25: 20, // 예시 값
-                status: getStatus(50, 20) // 상태 계산
-            };
-
-            dataRow.innerHTML = `
-                <td>${airQualityData.pm10}</td>
-                <td>${airQualityData.pm25}</td>
-                <td>${airQualityData.status}</td>
-            `;
         }
 
         function getStatus(pm10, pm25) {
@@ -222,9 +223,12 @@
             const now = new Date();
             if (now.getMinutes() === 0 && now.getSeconds() === 0) {
                 fetchWeather(); // 정각에 날씨 데이터 재호출
+                fetchAirQualityData(); // 미세먼지 데이터 재호출
             }
-        }, 1000); //
-                fetchWeather(); // 페이지 로드 시 초기 날씨 데이터 호출
+        }, 1000);
+
+        fetchAirQualityData(); // 페이지 로드 시 초기 미세먼지 데이터 호출
+        fetchWeather(); // 페이지 로드 시 초기 날씨 데이터 호출
     </script>
 </body>
 </html>
