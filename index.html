@@ -213,22 +213,14 @@
             return '매우 나쁨';
         }
 
-        // 매초마다 날씨 정보 갱신
-        setInterval(() => {
-            updateWeatherDisplay();
-        }, 1000); // 1초마다 갱신
-
-        // 매시 정각에 날씨 데이터 재호출
-        setInterval(() => {
-            const now = new Date();
-            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
-                fetchWeather(); // 정각에 날씨 데이터 재호출
-                fetchAirQualityData(); // 미세먼지 데이터 재호출
-            }
-        }, 1000);
-
+        // 페이지 로드 시 초기 미세먼지 데이터 호출
         fetchAirQualityData(); // 페이지 로드 시 초기 미세먼지 데이터 호출
         fetchWeather(); // 페이지 로드 시 초기 날씨 데이터 호출
+
+        // 매 12시간마다 미세먼지 데이터 재호출
+        setInterval(() => {
+            fetchAirQualityData(); // 미세먼지 데이터 재호출
+        }, 43200000); // 12시간 = 43200000 밀리초
     </script>
 </body>
 </html>
