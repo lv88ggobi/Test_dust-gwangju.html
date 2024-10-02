@@ -5,6 +5,12 @@ let weatherData = {
     skyStat: '' // skyStat 추가
 };
 
+let previousAirQuality = {
+    pm10Value: null,
+    pm25Value: null,
+    status: ''
+};
+
 async function fetchWeather() {
     // 날씨 정보 가져오기
     const today = new Date();
@@ -56,17 +62,28 @@ async function fetchAirQualityData() {
             const airQualityInfo = data.response.body.items[0]; // 첫 번째 아이템 가져오기
 
             // pm10Value와 pm25Value를 td에 업데이트
+            previousAirQuality.pm10Value = airQualityInfo.pm10Value;
+            previousAirQuality.pm25Value = airQualityInfo.pm25Value;
+            previousAirQuality.status = getStatus(airQualityInfo.pm10Value, airQualityInfo.pm25Value);
+
             const dataRow = document.getElementById('dataRow');
             dataRow.innerHTML = `
-                <td>${airQualityInfo.pm10Value}</td>
-                <td>${airQualityInfo.pm25Value}</td>
-                <td>${getStatus(airQualityInfo.pm10Value, airQualityInfo.pm25Value)}</td>
+                <td>${previousAirQuality.pm10Value}</td>
+                <td>${previousAirQuality.pm25Value}</td>
+                <td>${previousAirQuality.status}</td>
             `;
         } else {
             throw new Error("미세먼지 데이터가 없습니다.");
         }
     } catch (error) {
         console.error('미세먼지 데이터 가져오기 오류:', error);
+        // 이전 데이터를 표시
+        const dataRow = document.getElementById('dataRow');
+        dataRow.innerHTML = `
+            <td>${previousAirQuality.pm10Value !== null ? previousAirQuality.pm10Value : 'N/A'}</td>
+            <td>${previousAirQuality.pm25Value !== null ? previousAirQuality.pm25Value : 'N/A'}</td>
+            <td>${previousAirQuality.status !== '' ? previousAirQuality.status : 'N/A'}</td>
+        `;
         document.getElementById('error').innerText = `미세먼지 데이터 오류: ${error.message}`;
     }
 }
