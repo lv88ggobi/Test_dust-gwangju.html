@@ -129,9 +129,9 @@
         }
 
         async function fetchWeatherData(date, hour) {
-            const area = "&nx=54&ny=34"; // 부산 지역 좌표
+            const area = "&nx=58&ny=125"; // 광주광역시 좌표
             const apiKey = 'YOUR_API_KEY'; // 여기에 API 키를 입력하세요.
-            const url =  `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=jf%2FvdfY7Y%2BbX9OrcH4QGLyZoaIZAXSa7hYlvlZ9mU%2B8eLl3o7ZkUFIHKY45xn1ksjCiwnxG5xvrojybxWJ3R5Q%3D%3D&pageNo=1&numOfRows=10&dataType=JSON&base_date=${date}&base_time=${hour}&nx=59&ny=74`; // URL 수정 필요
+            const url =  `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=jf%2FvdfY7Y%2BbX9OrcH4QGLyZoaIZAXSa7hYlvlZ9mU%2B8eLl3o7ZkUFIHKY45xn1ksjCiwnxG5xvrojybxWJ3R5Q%3D%3D&pageNo=1&numOfRows=10&dataType=JSON&base_date=${date}&base_time=${hour}&nx=58&ny=125`; // URL 수정
             try {
                 const response = await fetch(url);
                 const data = await response.json();
