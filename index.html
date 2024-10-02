@@ -88,8 +88,7 @@
         let weatherData = {
             weather: '',
             temperature: '',
-            pty: '',
-            skyStat: '' // skyStat 추가
+            pty: ''
         };
 
         async function fetchWeather() {
@@ -133,16 +132,16 @@
 
                 let weatherString = '';
                 let temperature = '';
+                let skyStat = '';
 
                 weatherInfo.forEach(item => {
                     if (item.category === 'SKY') {
                         const sky = parseInt(item.fcstValue);
-                        weatherData.skyStat = sky; // skyStat 저장
+                        skyStat = sky === 1 ? '1' : sky === 2 ? '2' : sky === 3 ? '3' : '4';
                     } else if (item.category === 'TMP') {
                         temperature = `${item.fcstValue}°C`;
                     } else if (item.category === 'PTY') {
                         const pty = parseInt(item.fcstValue);
-                        weatherData.pty = pty; // pty 저장
                         if (pty === 1 || pty === 4) {
                             weatherString = '비';
                         } else if (pty === 2) {
@@ -150,13 +149,14 @@
                         } else if (pty === 3) {
                             weatherString = '눈';
                         } else if (pty === 0) {
-                            weatherString = (weatherData.skyStat === 1 || weatherData.skyStat === 2) ? "맑음" : "흐림";
+                            weatherString = (skyStat === '1' || skyStat === '2') ? "맑음" : "흐림";
                         }
                     }
                 });
 
                 weatherData.weather = weatherString;
                 weatherData.temperature = temperature;
+                weatherData.pty = skyStat; // skyStat로 pty 대체
 
                 updateWeatherDisplay();
             } catch (error) {
@@ -186,23 +186,21 @@
         }
 
         function updateWeatherDisplay() {
-            const { weather, temperature, pty, skyStat } = weatherData;
+            const { weather, temperature, pty } = weatherData;
             document.getElementById('weatherInfo').innerText = `${weather} ${temperature}`;
 
             // 날씨 아이콘 설정
             const weatherIcon = document.getElementById('weatherIcon');
-            if (pty === '0' && skyStat === '1') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png'; // 맑음
-            } else if (pty === '1') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Rain.png'; // 비
+            if (pty === '1') {
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png';
             } else if (pty === '2' || pty === '4') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow_Rain.png'; // 비/눈
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Rain.png';
             } else if (pty === '3') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow.png'; // 눈
-            } else if (pty === '0' && skyStat === '4') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png'; // 흐림
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow_Rain.png';
+            } else if (pty === '4') {
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow.png';
             } else {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png'; // 기본 흐림 아이콘
+                             weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png';
             }
         }
 
@@ -223,11 +221,10 @@
             const now = new Date();
             if (now.getMinutes() === 0 && now.getSeconds() === 0) {
                 fetchWeather(); // 정각에 날씨 데이터 재호출
-                fetchAirQualityData(); // 미세먼지 데이터 재호출
+                fetchAirQualityData();
             }
         }, 1000);
-
-        fetchAirQualityData(); // 페이지 로드 시 초기 미세먼지 데이터 호출
+        fetchAirQualityData();
         fetchWeather(); // 페이지 로드 시 초기 날씨 데이터 호출
     </script>
 </body>
