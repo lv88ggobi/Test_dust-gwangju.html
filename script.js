@@ -32,7 +32,16 @@ async function fetchWeather() {
     }
 
     // 미세먼지 데이터도 가져오기
-  async function fetchAirQualityData() {
+    await fetchAirQualityData();
+}
+
+async function fetchWeatherData(date, hour) {
+    // 여기에 날씨 데이터 API 호출 로직을 추가하세요.
+    // 예시:
+    console.log(`Fetching weather data for ${date} at ${hour}`);
+}
+
+async function fetchAirQualityData() {
     const airQualityApiUrl = 'https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=cd3PPQWcbkKMI5VfNxGsPtJrtQj06%2FdeSWnzTp7x9WcwByrKU26y4O8UCCJSWTN24yIW6hHLmA0DleNDExXe1A%3D%3D&sidoName=%EA%B4%91%EC%A3%BC&pageNo=1&numOfRows=1&returnType=JSON&ver=1.0';
 
     try {
@@ -61,3 +70,17 @@ async function fetchWeather() {
         document.getElementById('error').innerText = `미세먼지 데이터 오류: ${error.message}`;
     }
 }
+
+function getStatus(pm10, pm25) {
+    if (pm10 <= 30 && pm25 <= 15) return '좋음';
+    if (pm10 <= 80 && pm25 <= 35) return '보통';
+    if (pm10 <= 150 && pm25 <= 75) return '나쁨';
+    return '매우 나쁨';
+}
+
+// 초기 데이터 호출
+fetchWeather();
+fetchAirQualityData();
+
+// 매 6시간마다 미세먼지 데이터 재호출
+setInterval(fetchAirQualityData, 6 * 60 * 60 * 1000); // 6시간마다 호출
