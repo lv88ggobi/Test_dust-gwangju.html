@@ -1,84 +1,52 @@
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Nanum Gothic', sans-serif;
     margin: 0;
-    padding: 0;
-    background-color: #000000;
+    padding: 2px 0 0 5px; /* 상단과 좌측에 패딩 */
+    background-color: #000000; /* 배경색: 검정 */
     color: white;
-}
-
-.container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* 왼쪽 정렬 */
     align-items: flex-start;
+    height: 100vh;
 }
 
 .main {
     display: flex;
-    align-items: flex-start;
+    align-items: flex-start; /* 왼쪽 정렬 */
     background-color: #000000;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    width: 300px;
+    padding: 0px;
+    width: 700px;
 }
 
-.table-container {
-    margin-right: 10px;
+.weather-info {
+    font-size: 50px;
+    text-align: center;
+    padding-top: 5px;
+    margin-right: 20px;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0;
-}
-
-.select-container {
-    display: flex;
-    align-items: center;
-    margin: 0;
-}
-
-select {
-    padding: 4px;
-    border: 1px solid #00796b;
-    border-radius: 1px;
-    margin-right: 1px;
-    font-size: 12px;
-    color: black;
-}
-
-button {
-    background-color: #00796b;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 1px 39px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-size: 11px;
-}
-
-button:hover {
-    background-color: #004d40;
+.weather-icon {
+    width: 50px;
+    height: 55px;
+    padding-top: 8px;
+    margin-right: 5px;
 }
 
 table {
-    width: 100%;
+    width: 285px;
     border-collapse: collapse;
     background-color: black;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 1px;
-    text-align: center;
-    font-size: 12px;
-    color: white;
+    font-size: 20px;
 }
 
 th {
     background-color: #004d40;
+    font-size: 24px; /* 헤더 셀의 폰트 크기 설정 */
+}
+
+td {
+    font-size: 30px; /* 데이터 셀의 폰트 크기 설정 */
+    text-align: center;
     color: white;
 }
 
