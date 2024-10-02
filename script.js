@@ -4,6 +4,7 @@ async function fetchAirQualityData() {
         const response = await fetch(airQualityApiUrl);
         
         // 상태 코드 체크
+        console.log(`응답 상태 코드: ${response.status}`); // 상태 코드 로그
         if (!response.ok) {
             throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
         }
