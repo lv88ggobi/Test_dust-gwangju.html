@@ -92,6 +92,13 @@
             skyStat: '' // skyStat 추가
         };
 
+        // 이전 미세먼지 데이터
+        let previousAirQuality = {
+            pm10Value: '50',
+            pm25Value: '20',
+            status: '보통'
+        };
+
         async function fetchWeather() {
             // 날씨 정보 가져오기
             const today = new Date();
@@ -117,9 +124,6 @@
             } else {
                 await fetchWeatherData(date, hour);
             }
-
-            // 미세먼지 데이터도 가져오기
-            await fetchAirQualityData();
         }
 
         async function fetchWeatherData(date, hour) {
@@ -173,14 +177,25 @@
                 const airQualityInfo = data.response.body.items[0]; // 첫 번째 아이템 가져오기
 
                 // pm10Value와 pm25Value를 td에 업데이트
+                previousAirQuality.pm10Value = airQualityInfo.pm10Value;
+                previousAirQuality.pm25Value = airQualityInfo.pm25Value;
+                previousAirQuality.status = getStatus(airQualityInfo.pm10Value, airQualityInfo.pm25Value);
+
                 const dataRow = document.getElementById('dataRow');
                 dataRow.innerHTML = `
-                    <td>${airQualityInfo.pm10Value}</td>
-                    <td>${airQualityInfo.pm25Value}</td>
-                    <td>${getStatus(airQualityInfo.pm10Value, airQualityInfo.pm25Value)}</td>
+                    <td>${previousAirQuality.pm10Value}</td>
+                    <td>${previousAirQuality.pm25Value}</td>
+                    <td>${previousAirQuality.status}</td>
                 `;
             } catch (error) {
                 console.error('미세먼지 데이터 가져오기 오류:', error);
+                // 새로 고침 실패 시 이전 값 표시
+                const dataRow = document.getElementById('dataRow');
+                dataRow.innerHTML = `
+                    <td>${previousAirQuality.pm10Value}</td>
+                    <td>${previousAirQuality.pm25Value}</td>
+                    <td>${previousAirQuality.status}</td>
+                `;
                 document.getElementById('error').innerText = `미세먼지 데이터 오류: ${error.message}`;
             }
         }
@@ -218,14 +233,10 @@
             updateWeatherDisplay();
         }, 1000); // 1초마다 갱신
 
-        // 매시 정각에 날씨 데이터 재호출
+        // 매 6시간마다 미세먼지 데이터 재호출
         setInterval(() => {
-            const now = new Date();
-            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
-                fetchWeather(); // 정각에 날씨 데이터 재호출
-                fetchAirQualityData(); // 미세먼지 데이터 재호출
-            }
-        }, 1000);
+            fetchAirQualityData(); // 미세먼지 데이터 재호출
+        }, 21600000); // 6시간 = 21600000ms
 
         fetchAirQualityData(); // 페이지 로드 시 초기 미세먼지 데이터 호출
         fetchWeather(); // 페이지 로드 시 초기 날씨 데이터 호출
