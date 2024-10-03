@@ -57,28 +57,16 @@
             border: 1px solid #ffffff; /* 얇은 셀 경계 추가 */
             padding: 2px; /* 패딩 줄이기 */
         }
-        td::after {
-            content: '';
-            display: block;
-            width: 2px; /* 오른쪽 경계 두께 조정 */
-            height: 30px;
-            background-color: #004d40; /* 오른쪽 경계 색 */
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-        tbody tr:last-child td::after {
-            display: none; /* 마지막 행의 오른쪽 경계선 제거 */
-        }
         .status {
             padding: 5px;
             border-radius: 5px;
             display: inline-block;
         }
-        .good { background-color: #4caf50; color: black; }
-        .moderate { background-color: #ffeb3b; color: black; }
-        .bad { background-color: #f44336; color: white; }
-        .very-bad { background-color: #9c27b0; color: white; }
+        .good { background-color: #4caf50; color: green; }
+        .moderate { background-color: #ffeb3b; color: blue; }
+        .bad { background-color: #f44336; color: orange; }
+        .very-bad { background-color: #9c27b0; color: orangered; }
+        .unknown { background-color: #9e9e9e; color: white; } /* 확인중 색상 추가 */
         .error {
             color: red;
             text-align: center;
