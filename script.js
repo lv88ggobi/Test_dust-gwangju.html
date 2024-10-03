@@ -10,10 +10,13 @@ async function fetchAirQualityData() {
     const now = Date.now();
     const lastFetch = localStorage.getItem('lastFetch');
     
+    // 캐시된 데이터 사용
     if (lastFetch && now - lastFetch < CACHE_DURATION) {
         const cachedData = JSON.parse(localStorage.getItem('airQualityData'));
-        updateAirQualityDisplay(cachedData);
-        return;
+        if (cachedData) {
+            updateAirQualityDisplay(cachedData);
+            return;
+        }
     }
 
     const airQualityApiUrl = 'https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=cd3PPQWcbkKMI5VfNxGsPtJrtQj06%2FdeSWnzTp7x9WcwByrKU26y4O8UCCJSWTN24yIW6hHLmA0DleNDExXe1A%3D%3D&sidoName=%EA%B4%91%EC%A3%BC&pageNo=1&numOfRows=1&returnType=JSON&ver=1.0';
@@ -23,12 +26,13 @@ async function fetchAirQualityData() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
 
+        const data = await response.json();
         // 데이터 구조 확인
-        if (data.response && data.response.body && data.response.body.items && data.response.body.items.length > 0) {
+        if (data.response?.body?.items?.length > 0) {
             const airQualityInfo = data.response.body.items[0];
 
+            // 이전 데이터 업데이트
             previousAirQuality.pm10Value = airQualityInfo.pm10Value;
             previousAirQuality.pm25Value = airQualityInfo.pm25Value;
             previousAirQuality.status = getStatus(airQualityInfo.pm10Value, airQualityInfo.pm25Value);
