@@ -174,6 +174,11 @@
             try {
                 const response = await fetch(airQualityApiUrl);
                 const data = await response.json();
+                
+                if (data.response.body.items.length === 0) {
+                    throw new Error("미세먼지 데이터가 없습니다.");
+                }
+
                 const airQualityInfo = data.response.body.items[0]; // 첫 번째 아이템 가져오기
 
                 // pm10Value와 pm25Value를 td에 업데이트
@@ -233,10 +238,10 @@
             updateWeatherDisplay();
         }, 1000); // 1초마다 갱신
 
-        // 매 6시간마다 미세먼지 데이터 재호출
+        // 매 24시간마다 미세먼지 데이터 재호출
         setInterval(() => {
             fetchAirQualityData(); // 미세먼지 데이터 재호출
-        }, 21600000); // 6시간 = 21600000ms
+        }, 86400000); // 24시간 = 86400000ms
 
         fetchAirQualityData(); // 페이지 로드 시 초기 미세먼지 데이터 호출
         fetchWeather(); // 페이지 로드 시 초기 날씨 데이터 호출
