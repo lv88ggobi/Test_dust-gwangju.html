@@ -1,11 +1,11 @@
 body {
     font-family: 'Nanum Gothic', sans-serif;
     margin: 0;
-    padding: 2px 0 0 5px; /* 상단과 좌측에 패딩 */
+    padding: 10px; /* 상단과 좌측에 패딩 */
     background-color: #000000; /* 배경색: 검정 */
     color: white;
     display: flex;
-    justify-content: flex-start; /* 왼쪽 정렬 */
+    justify-content: center; /* 중앙 정렬 */
     align-items: flex-start;
     height: 100vh;
 }
@@ -14,8 +14,10 @@ body {
     display: flex;
     align-items: flex-start; /* 왼쪽 정렬 */
     background-color: #000000;
-    padding: 0px;
+    padding: 20px; /* 여백 추가 */
     width: 700px;
+    border-radius: 8px; /* 부드러운 모서리 추가 */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* 그림자 추가 */
 }
 
 .weather-info {
@@ -30,6 +32,10 @@ body {
     height: 55px;
     padding-top: 8px;
     margin-right: 5px;
+}
+
+.table-container {
+    margin-left: 20px; /* 테이블과의 간격 */
 }
 
 table {
@@ -54,4 +60,5 @@ td {
     color: red;
     text-align: center;
     margin-top: 10px;
+    font-size: 18px; /* 오류 메시지 폰트 크기 조정 */
 }
