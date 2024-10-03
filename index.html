@@ -52,7 +52,27 @@
             font-size: 30px;
             text-align: center;
             color: white;
+            position: relative;
         }
+        td::after {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 30px;
+            background-color: #004d40;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .status {
+            padding: 5px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .good { background-color: #4caf50; color: black; }
+        .moderate { background-color: #ffeb3b; color: black; }
+        .bad { background-color: #f44336; color: white; }
+        .very-bad { background-color: #9c27b0; color: white; }
         .error {
             color: red;
             text-align: center;
@@ -77,7 +97,7 @@
                     <tr id="dataRow">
                         <td>50</td>
                         <td>20</td>
-                        <td>보통</td>
+                        <td class="status moderate">보통</td>
                     </tr>
                 </tbody>
             </table>
@@ -167,7 +187,7 @@
                 updateWeatherDisplay();
             } catch (error) {
                 console.error('날씨 데이터 가져오기 오류:', error);
-                document.getElementById('error').innerText = `Error`; // 변경된 부분
+                document.getElementById('error').innerText = error.message; // 변경된 부분
             }
         }
 
@@ -188,20 +208,18 @@
                 previousAirQuality.status = getStatus(airQualityInfo.pm10Value, airQualityInfo.pm25Value);
 
                 const dataRow = document.getElementById('dataRow');
-                dataRow.innerHTML = `
-                    <td>${previousAirQuality.pm10Value}</td>
+                dataRow.innerHTML = 
+                    `<td>${previousAirQuality.pm10Value}</td>
                     <td>${previousAirQuality.pm25Value}</td>
-                    <td>${previousAirQuality.status}</td>
-                `;
+                    <td class="status ${previousAirQuality.status}">${previousAirQuality.status}</td>`;
             } catch (error) {
                 console.error('미세먼지 데이터 가져오기 오류:', error);
                 const dataRow = document.getElementById('dataRow');
-                dataRow.innerHTML = `
-                    <td>${previousAirQuality.pm10Value}</td>
+                dataRow.innerHTML = 
+                    `<td>${previousAirQuality.pm10Value}</td>
                     <td>${previousAirQuality.pm25Value}</td>
-                    <td>${previousAirQuality.status}</td>
-                `;
-                document.getElementById('error').innerText = `Error`; // 변경된 부분
+                    <td class="status ${previousAirQuality.status}">${previousAirQuality.status}</td>`;
+                document.getElementById('error').innerText = error.message; // 변경된 부분
             }
         }
 
@@ -228,10 +246,10 @@
         function getStatus(pm10, pm25) {
             pm10 = parseInt(pm10);
             pm25 = parseInt(pm25);
-            if (pm10 <= 30 && pm25 <= 15) return '좋음';
-            if (pm10 <= 80 && pm25 <= 35) return '보통';
-            if (pm10 <= 150 && pm25 <= 75) return '나쁨';
-            return '매우 나쁨';
+            if (pm10 <= 30 && pm25 <= 15) return 'good';
+            if (pm10 <= 80 && pm25 <= 35) return 'moderate';
+            if (pm10 <= 150 && pm25 <= 75) return 'bad';
+            return 'very-bad';
         }
 
         setInterval(() => {
