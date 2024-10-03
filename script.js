@@ -5,11 +5,12 @@ let previousAirQuality = {
 };
 
 const CACHE_DURATION = 3600000; // 1시간
+const MAX_RETRIES = 3; // 최대 재시도 횟수
 
-async function fetchAirQualityData() {
+async function fetchAirQualityData(retryCount = 0) {
     const now = Date.now();
     const lastFetch = localStorage.getItem('lastFetch');
-    
+
     // 캐시된 데이터 사용
     if (lastFetch && now - lastFetch < CACHE_DURATION) {
         const cachedData = JSON.parse(localStorage.getItem('airQualityData'));
@@ -46,9 +47,15 @@ async function fetchAirQualityData() {
         }
     } catch (error) {
         console.error('미세먼지 데이터 가져오기 오류:', error);
-        // 이전 데이터 표시
-        updateAirQualityDisplay(previousAirQuality);
-        document.getElementById('error').innerText = `미세먼지 데이터 오류: ${error.message}`;
+        // 재시도 로직
+        if (retryCount < MAX_RETRIES) {
+            console.log(`재시도 중... (${retryCount + 1}/${MAX_RETRIES})`);
+            setTimeout(() => fetchAirQualityData(retryCount + 1), 5000); // 5초 후 재시도
+        } else {
+            // 이전 데이터 표시
+            updateAirQualityDisplay(previousAirQuality);
+            document.getElementById('error').innerText = `미세먼지 데이터 오류: ${error.message}`;
+        }
     }
 }
 
