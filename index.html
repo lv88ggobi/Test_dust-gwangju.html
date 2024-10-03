@@ -29,13 +29,13 @@
         .weather-info {
             font-size: 50px;
             text-align: center;
-            padding-top:5px;
+            padding-top: 5px;
             margin-right: 20px;
         }
         .weather-icon {
             width: 50px;
             height: 55px;
-            padding-top:8px;
+            padding-top: 8px;
             margin-right: 5px;
         }
         table {
@@ -135,6 +135,10 @@
                 const data = await response.json();
                 const weatherInfo = data.response.body.items.item;
 
+                if (!weatherInfo || weatherInfo.length === 0) {
+                    throw new Error("날씨 데이터가 없습니다.");
+                }
+
                 let weatherString = '';
                 let temperature = '';
 
@@ -175,7 +179,7 @@
                 const response = await fetch(airQualityApiUrl);
                 const data = await response.json();
                 
-                if (data.response.body.items.length === 0) {
+                if (!data.response.body.items || data.response.body.items.length === 0) {
                     throw new Error("미세먼지 데이터가 없습니다.");
                 }
 
@@ -227,6 +231,8 @@
         }
 
         function getStatus(pm10, pm25) {
+            pm10 = parseInt(pm10);
+            pm25 = parseInt(pm25);
             if (pm10 <= 30 && pm25 <= 15) return '좋음';
             if (pm10 <= 80 && pm25 <= 35) return '보통';
             if (pm10 <= 150 && pm25 <= 75) return '나쁨';
