@@ -246,10 +246,10 @@
         function getStatus(pm10, pm25) {
             pm10 = parseInt(pm10);
             pm25 = parseInt(pm25);
-            if (pm10 <= 30 && pm25 <= 15) return 'good';
-            if (pm10 <= 80 && pm25 <= 35) return 'moderate';
-            if (pm10 <= 150 && pm25 <= 75) return 'bad';
-            return 'very-bad';
+            if (pm10 <= 30 && pm25 <= 15) return '좋음';
+            if (pm10 <= 80 && pm25 <= 35) return '보통';
+            if (pm10 <= 150 && pm25 <= 75) return '나쁨';
+            return '매우 나쁨';
         }
 
         setInterval(() => {
