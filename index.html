@@ -179,6 +179,7 @@
                 const response = await fetch(airQualityApiUrl);
                 const data = await response.json();
                 
+                // items 배열에 데이터가 있는지 체크
                 if (!data.response.body.items || data.response.body.items.length === 0) {
                     throw new Error("미세먼지 데이터가 없습니다.");
                 }
