@@ -76,10 +76,33 @@
             text-align: center;
             margin-top: 10px;
         }
+        .loading {
+            display: none; /* 초기에는 숨김 */
+            text-align: center;
+            margin: 20px auto;
+            color: white;
+        }
+        .spinner {
+            border: 8px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #ffffff; /* 스피너 색상 */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: auto; /* 가운데 정렬 */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="main">
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>로딩 중...</p>
+        </div>
         <div id="weatherInfo" class="weather-info">날씨 정보를 불러오는 중...</div>
         <img id="weatherIcon" class="weather-icon" src="" alt="날씨 아이콘" />
         <div class="table-container">
@@ -117,6 +140,7 @@
         };
 
         async function fetchWeather() {
+            document.getElementById('loading').style.display = 'block'; // 로딩 메시지 표시
             const today = new Date();
             const date = today.toISOString().slice(0, 10).replace(/-/g, '');
             let hour = String(today.getHours()).padStart(2, '0') + '00';
@@ -186,10 +210,13 @@
             } catch (error) {
                 console.error('날씨 데이터 가져오기 오류:', error);
                 document.getElementById('error').innerText = error.message;
+            } finally {
+                document.getElementById('loading').style.display = 'none'; // 로딩 메시지 숨김
             }
         }
 
         async function fetchAirQualityData() {
+            document.getElementById('loading').style.display = 'block'; // 로딩 메시지 표시
             const airQualityApiUrl = 'https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=cd3PPQWcbkKMI5VfNxGsPtJrtQj06%2FdeSWnzTp7x9WcwByrKU26y4O8UCCJSWTN24yIW6hHLmA0DleNDExXe1A%3D%3D&sidoName=%EA%B4%91%EC%A3%BC&pageNo=1&numOfRows=1&returnType=JSON&ver=1.0';
             try {
                 const response = await fetch(airQualityApiUrl);
@@ -218,6 +245,8 @@
                     <td>${previousAirQuality.pm25Value}</td>
                     <td class="status ${previousAirQuality.status}">${previousAirQuality.status}</td>`;
                 document.getElementById('error').innerText = error.message;
+            } finally {
+                document.getElementById('loading').style.display = 'none'; // 로딩 메시지 숨김
             }
         }
 
