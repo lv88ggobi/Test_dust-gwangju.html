@@ -176,7 +176,7 @@
                 const weatherInfo = data.response.body.items.item;
 
                 if (!weatherInfo || weatherInfo.length === 0) {
-                    throw new Error("날씨 데이터가 없습니다.");
+                    throw new Error("Error"); // 오류 문구 수정
                 }
 
                 let weatherString = '';
@@ -224,7 +224,7 @@
                 const data = await response.json();
 
                 if (!data.response.body.items || data.response.body.items.length === 0) {
-                    throw new Error("미세먼지 데이터가 없습니다.");
+                    throw new Error("Error"); // 오류 문구 수정
                 }
 
                 const airQualityInfo = data.response.body.items[0];
@@ -245,7 +245,7 @@
                     `<td>${previousAirQuality.pm10Value}</td>
                     <td>${previousAirQuality.pm25Value}</td>
                     <td class="status unknown">${previousAirQuality.status}</td>`;
-                document.getElementById('error').innerText = error.message;
+                document.getElementById('error').innerText = "Error"; // 오류 문구 수정
             } finally {
                 document.getElementById('loading').style.display = 'none'; // 로딩 메시지 숨김
             }
@@ -295,7 +295,7 @@
             }
         }
 
-        setInterval(fetchWeather, 300000); // 5분마다 날씨 정보 갱신
+        setInterval(fetchWeather, 30000); // 30초마다 날씨 정보 갱신
         setInterval(fetchAirQualityData, 86400000); // 1일마다 미세먼지 정보 갱신
 
         fetchAirQualityData(); 
