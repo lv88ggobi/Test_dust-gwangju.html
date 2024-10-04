@@ -200,7 +200,7 @@
                 updateWeatherDisplay();
             } catch (error) {
                 console.error('날씨 데이터 가져오기 오류:', error);
-                document.getElementById('error').innerText = "Error";
+                document.getElementById('error').innerText = "Time"; // 오류 메시지를 "Time"으로 변경
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
@@ -245,7 +245,7 @@
                     `<td>${previousAirQuality.pm10Value}</td>
                     <td>${previousAirQuality.pm25Value}</td>
                     <td class="status unknown">${previousAirQuality.status}</td>`;
-                document.getElementById('error').innerText = "Error";
+                document.getElementById('error').innerText = "Time"; // 오류 메시지를 "Time"으로 변경
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
