@@ -184,22 +184,13 @@
 
                 weatherInfo.forEach(item => {
                     if (item.category === 'SKY') {
-                        const sky = parseInt(item.fcstValue);
-                        weatherData.skyStat = sky;
+                        weatherData.skyStat = parseInt(item.fcstValue);
                     } else if (item.category === 'TMP') {
                         temperature = `${item.fcstValue}°C`;
                     } else if (item.category === 'PTY') {
                         const pty = parseInt(item.fcstValue);
                         weatherData.pty = pty;
-                        if (pty === 1 || pty === 4) {
-                            weatherString = '비';
-                        } else if (pty === 2) {
-                            weatherString = '비/눈';
-                        } else if (pty === 3) {
-                            weatherString = '눈';
-                        } else if (pty === 0) {
-                            weatherString = (weatherData.skyStat === 1 || weatherData.skyStat === 2) ? "맑음" : "흐림";
-                        }
+                        weatherString = getWeatherDescription(pty);
                     }
                 });
 
@@ -212,6 +203,16 @@
                 document.getElementById('error').innerText = error.message;
             } finally {
                 document.getElementById('loading').style.display = 'none'; // 로딩 메시지 숨김
+            }
+        }
+
+        function getWeatherDescription(pty) {
+            switch (pty) {
+                case 1: return '비';
+                case 2: return '비/눈';
+                case 3: return '눈';
+                case 4: return '비';
+                default: return (weatherData.skyStat === 1 || weatherData.skyStat === 2) ? "맑음" : "흐림";
             }
         }
 
@@ -255,18 +256,22 @@
             document.getElementById('weatherInfo').innerText = `${weather} ${temperature}`;
 
             const weatherIcon = document.getElementById('weatherIcon');
+            weatherIcon.src = getWeatherIcon(pty, skyStat);
+        }
+
+        function getWeatherIcon(pty, skyStat) {
             if (pty === '0' && skyStat === '1') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png';
+                return 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png';
             } else if (pty === '1') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Rain.png';
+                return 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Rain.png';
             } else if (pty === '2' || pty === '4') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow_Rain.png';
+                return 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow_Rain.png';
             } else if (pty === '3') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow.png';
+                return 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow.png';
             } else if (pty === '0' && skyStat === '4') {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png';
+                return 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png';
             } else {
-                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png';
+                return 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png';
             }
         }
 
@@ -290,13 +295,8 @@
             }
         }
 
-        setInterval(() => {
-            updateWeatherDisplay();
-        }, 1000); 
-
-        setInterval(() => {
-            fetchAirQualityData();
-        }, 86400000); 
+        setInterval(fetchWeather, 300000); // 5분마다 날씨 정보 갱신
+        setInterval(fetchAirQualityData, 86400000); // 1일마다 미세먼지 정보 갱신
 
         fetchAirQualityData(); 
         fetchWeather(); 
