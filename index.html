@@ -62,9 +62,11 @@
             margin: 0;
         }
         .status {
-            padding: 5px;
+            padding: 0; /* 패딩 최소화 */
             border-radius: 5px;
-            display: inline-block;
+            width: 30%; /* 셀의 너비를 100%로 설정 */
+            text-align: center; /* 중앙 정렬 */
+            box-sizing: border-box; /* Padding 포함하여 계산 */
         }
         .good { background-color: #4caf50; color: green; }
         .moderate { background-color: #ffeb3b; color: blue; }
