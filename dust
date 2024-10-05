@@ -1,1 +1,8 @@
+#폴더 지우기
+git rm -r myfolder
 
+#폴더 지운 상태를 커밋
+git commit -m '2'
+
+#폴더 지운 상태를 푸시
+git push
