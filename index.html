@@ -62,11 +62,11 @@
             margin: 0;
         }
         .status {
-            padding: 0; /* 패딩 최소화 */
+            padding: 0;
             border-radius: 5px;
-            width: 30%; /* 셀의 너비를 100%로 설정 */
-            text-align: center; /* 중앙 정렬 */
-            box-sizing: border-box; /* Padding 포함하여 계산 */
+            width: 30%;
+            text-align: center;
+            box-sizing: border-box;
         }
         .good { background-color: #0000ff; color: white; }
         .moderate { background-color: #00ff00; color: white; }
@@ -78,16 +78,10 @@
             text-align: center;
             margin-top: 10px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
     <div class="main">
-        <div id="loading" class="loading">
-        </div>
         <div id="weatherInfo" class="weather-info">날씨 정보를 불러오는 중...</div>
         <img id="weatherIcon" class="weather-icon" src="" alt="날씨 아이콘" />
         <div class="table-container">
@@ -103,7 +97,7 @@
                     <tr id="dataRow">
                         <td>50</td>
                         <td>20</td>
-                        <td class="status good">좋음</td> <!-- 초기 상태를 '좋음'으로 설정 -->
+                        <td class="status good">좋음</td>
                     </tr>
                 </tbody>
             </table>
@@ -121,11 +115,10 @@
         let previousAirQuality = {
             pm10Value: '50',
             pm25Value: '20',
-            status: '좋음' // 초기 상태를 '좋음'으로 설정
+            status: '좋음'
         };
 
         async function fetchWeather() {
-            document.getElementById('loading').style.display = 'block';
             const today = new Date();
             const date = today.toISOString().slice(0, 10).replace(/-/g, '');
             let hour = String(today.getHours()).padStart(2, '0') + '00';
@@ -185,9 +178,7 @@
                 updateWeatherDisplay();
             } catch (error) {
                 console.error('날씨 데이터 가져오기 오류:', error);
-                document.getElementById('error').innerText = "Time"; // 오류 메시지를 "Time"으로 변경
-            } finally {
-                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').innerText = "Time"; 
             }
         }
 
@@ -202,7 +193,6 @@
         }
 
         async function fetchAirQualityData() {
-            document.getElementById('loading').style.display = 'block';
             const airQualityApiUrl = 'https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=cd3PPQWcbkKMI5VfNxGsPtJrtQj06%2FdeSWnzTp7x9WcwByrKU26y4O8UCCJSWTN24yIW6hHLmA0DleNDExXe1A%3D%3D&sidoName=%EA%B4%91%EC%A3%BC&pageNo=1&numOfRows=1&returnType=JSON&ver=1.0';
             try {
                 const response = await fetch(airQualityApiUrl);
@@ -230,9 +220,7 @@
                     `<td>${previousAirQuality.pm10Value}</td>
                     <td>${previousAirQuality.pm25Value}</td>
                     <td class="status unknown">${previousAirQuality.status}</td>`;
-                document.getElementById('error').innerText = "Time"; // 오류 메시지를 "Time"으로 변경
-            } finally {
-                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').innerText = "Time"; 
             }
         }
 
@@ -267,7 +255,7 @@
             if (pm10 <= 80 && pm25 <= 35) return '보통';
             if (pm10 <= 150 && pm25 <= 75) return '나쁨';
             if (pm10 <= 9999 && pm25 <= 155) return '매우 나쁨';
-            return '확인중'; // 이 경우는 별도로 처리하지 않음
+            return '확인중';
         }
 
         function getStatusClass(status) {
