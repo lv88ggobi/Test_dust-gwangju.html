@@ -228,25 +228,24 @@
             const { weather, temperature, pty, skyStat } = weatherData;
             document.getElementById('weatherInfo').innerText = `${weather} ${temperature}`;
 
+            // 날씨 아이콘 설정
             const weatherIcon = document.getElementById('weatherIcon');
-            weatherIcon.src = getWeatherIcon(pty, skyStat);
-        }
-
         function getWeatherIcon(pty, skyStat) {
             if (pty === '0' && skyStat === '1') {
-                return 'https://github.com/lv88ggobi/Test_dust-gwangju.html/blob/main/Resource/WeatherIcon/Sun.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png'; // 맑음
             } else if (pty === '1') {
-                return 'https://github.com/lv88ggobi/Test_dust-gwangju.html/blob/main/Resource/WeatherIcon/Rain.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Rain.png'; // 비
             } else if (pty === '2' || pty === '4') {
-                return 'https://github.com/lv88ggobi/Test_dust-gwangju.html/blob/main/Resource/WeatherIcon/Snow_Rain.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow_Rain.png'; // 비/눈
             } else if (pty === '3') {
-                return 'https://github.com/lv88ggobi/Test_dust-gwangju.html/blob/main/Resource/WeatherIcon/Snow.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Snow.png'; // 눈
             } else if (pty === '0' && skyStat === '4') {
-                return 'https://github.com/lv88ggobi/Test_dust-gwangju.html/blob/main/Resource/WeatherIcon/Cloud.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png'; // 흐림
             } else {
-                return 'https://github.com/lv88ggobi/Test_dust-gwangju.html/blob/main/Resource/WeatherIcon/Cloud.png';
+                weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png'; // 기본 흐림 아이콘
             }
         }
+
 
         function getStatus(pm10, pm25) {
             pm10 = parseInt(pm10);
