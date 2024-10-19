@@ -230,7 +230,6 @@
 
             // 날씨 아이콘 설정
             const weatherIcon = document.getElementById('weatherIcon');
-        function getWeatherIcon(pty, skyStat) {
             if (pty === '0' && skyStat === '1') {
                 weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Sun.png'; // 맑음
             } else if (pty === '1') {
@@ -245,7 +244,6 @@
                 weatherIcon.src = 'https://github.com/WriggleCat/Test_Weather/raw/main/Resource/WeatherIcon/Cloud.png'; // 기본 흐림 아이콘
             }
         }
-
 
         function getStatus(pm10, pm25) {
             pm10 = parseInt(pm10);
