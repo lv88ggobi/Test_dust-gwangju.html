@@ -140,7 +140,7 @@
             hour = (parseInt(hour) - 300).toString().padStart(4, '0'); // 3시간 전으로 설정
 
             // 시간이 0시보다 작으면 어제의 2300으로 설정
-            if (parseInt(hour) < 0) {
+  /*          if (parseInt(hour) < 0) {
                 const yesterday = new Date(today);
                 yesterday.setDate(today.getDate() - 1);
                 const newDate = yesterday.toISOString().slice(0, 10).replace(/-/g, '');
@@ -148,7 +148,7 @@
                 await fetchWeatherData(newDate, hour); // 어제의 날씨 데이터 요청
             } else {
                 await fetchWeatherData(date, hour); // 오늘의 날씨 데이터 요청
-            }
+            }*/
         }
 
         // 날씨 데이터 API 요청 함수
